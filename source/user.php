@@ -3,7 +3,6 @@
 	require_once("inc/conn.php");
 	require_once("inc/function.php");	
 	
-	//checkUser();
 
 	date_default_timezone_set('PRC');
 	//$logfile = fopen("register.log", "a");
@@ -15,31 +14,43 @@
 	switch($func){
 	case 'add_user':
 	//	fwrite($logfile,"add_user\r\n");
+		check_user();
 		add_user();
 		break;
 	case 'del_user':
 	//	fwrite($logfile,"del_user\r\n");
+		check_user();
 		del_user();
 		break;
 	case 'get_userinfo':
 	//	fwrite($logfile,"get_userinfo\r\n");
+		check_user();
 		get_userinfo();
 		break;
 	case 'update_userinfo':
 	//	fwrite($logfile,"update_userinfo\r\n");
+		check_user();
 		update_userinfo();
 		break;
 	case 'get_privilege':
 	//	fwrite($logfile,"get_privilege\r\n");
+		check_user();
 		get_privilege();
 		break;
 	case 'deliver_privilege':
 	//	fwrite($logfile,"deliver_privilege\r\n");
+		check_user();
 		deliver_privilege();
 		break;
 	case 'get_avatar':
 	//	fwrite($logfile,"get_avatar\r\n");
+		check_user();
 		get_avatar();
+		break;
+	case 'check_user':
+	//	fwrite($logfile,"get_avatar\r\n");
+		check_user();
+		print 'true';
 		break;
 	}
 
@@ -161,6 +172,7 @@ function get_userinfo(){
 	while( $row = $result->fetch_assoc() ){
 		$com[] = $row;
 	}
+	unset($com[0]['password']);
 	if( is_object($result) )
 		$result->close();
 	echo json_encode($com);
@@ -178,7 +190,7 @@ function update_userinfo(){
     $major = $_POST["major"];
 	$workplace = $_POST["workplace"];
 	$job = $_POST["job"];
-	$uid = $_POST["uid"];
+	$uid = $_COOKIE["uid"];
 	
 	$checkArr = array(
 		"$uid" => 'digit', 
@@ -326,6 +338,13 @@ function get_avatar(){
 	$grav_url = "http://www.gravatar.com/avatar/" .md5(strtolower(trim($mail))) .
 		"?d=" .urlencode($default) . "&s=" . $size;
 	print $grav_url;
+}
+
+function check_user(){
+	if (checkUser() == false){
+		print 'false';
+		exit;
+	}
 }
 
 ?>
